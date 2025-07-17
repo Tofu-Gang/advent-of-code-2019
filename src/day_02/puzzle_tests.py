@@ -1,11 +1,11 @@
 __author__ = "Tofu-Gang"
 __email__ = "tofugangsw@gmail.com"
 
-from unittest import TestCase, main
-from src.intcode_computer.intcode_computer import IntcodeComputer
+from unittest import main
+from src.intcode_computer.tests import TestIntcodeComputer
 
 
-class TestDay02(TestCase):
+class TestDay02(TestIntcodeComputer):
 
 ################################################################################
 
@@ -54,35 +54,13 @@ class TestDay02(TestCase):
         1,1,1,4,99,5,6,0,99 becomes 30,1,1,4,2,5,6,0,99.
         """
 
-        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 0, 3500)
-        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 3, 70)
-        self._test_program("1,0,0,0,99", 0, 2)
-        self._test_program("2,3,0,3,99", 3, 6)
-        self._test_program("2,4,4,5,99,0", 5, 9801)
-        self._test_program("1,1,1,4,99,5,6,0,99", 0, 30)
-        self._test_program("1,1,1,4,99,5,6,0,99", 4, 2)
-
-################################################################################
-
-    def test_puzzle_2(self) -> None:
-        pass
-
-################################################################################
-
-    def _test_program(self, program: str, address: int, value: int) -> None:
-        """
-        Test an Intcode program by running it and then comparing a value from
-        a specified address with an expected one
-
-        :param program: an Intcode program
-        :param address: an address of the test value
-        :param value: an expected value to test against
-        """
-
-        computer = IntcodeComputer()
-        computer.load_program(program)
-        computer.run_program()
-        self.assertEqual(computer.get_value(address), value)
+        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 3500, 0)
+        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 70, 3)
+        self._test_program("1,0,0,0,99", 2, 0)
+        self._test_program("2,3,0,3,99",6, 3)
+        self._test_program("2,4,4,5,99,0", 9801, 5)
+        self._test_program("1,1,1,4,99,5,6,0,99", 30, 0)
+        self._test_program("1,1,1,4,99,5,6,0,99", 2, 4)
 
 ################################################################################
 
