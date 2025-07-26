@@ -103,8 +103,8 @@ def puzzle_01() -> int:
     with open(INPUT_FILE_PATH, "r") as f:
         computer = IntcodeComputer()
         computer.load_program(f.read().strip())
-        computer.set_input(1, 12)
-        computer.set_input(2, 2)
+        computer.set_value(1, 12)
+        computer.set_value(2, 2)
         computer.run_program()
 
         result = computer.get_value(0)
@@ -172,8 +172,8 @@ def puzzle_02() -> int:
             computer.reset()
             computer.load_program(program)
             noun, verb = permutation
-            computer.set_input(1, noun)
-            computer.set_input(2, verb)
+            computer.set_value(1, noun)
+            computer.set_value(2, verb)
             computer.run_program()
 
             if computer.get_value(0) == DESIRED_OUTPUT:
