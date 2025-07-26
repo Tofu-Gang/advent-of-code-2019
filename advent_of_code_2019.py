@@ -13,10 +13,17 @@ first. Each puzzle grants one star. Good luck!
 """
 
 from unittest import TestCase, main
+from src.day_01.puzzle import (puzzle_01 as day_01_puzzle_01,
+                               puzzle_02 as day_01_puzzle_02)
 
+
+################################################################################
 
 class TestAdventOfCode2019(TestCase):
-    pass
+
+    def test_day_01(self) -> None:
+        self.assertEqual(day_01_puzzle_01(), 3235550)
+        self.assertEqual(day_01_puzzle_02(), 4850462)
 
 ################################################################################
 
