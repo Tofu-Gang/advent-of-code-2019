@@ -17,6 +17,8 @@ from src.day_01.puzzle import (puzzle_01 as day_01_puzzle_01,
                                puzzle_02 as day_01_puzzle_02)
 from src.day_02.puzzle import (puzzle_01 as day_02_puzzle_01,
                                puzzle_02 as day_02_puzzle_02)
+from src.day_03.puzzle import (puzzle_01 as day_03_puzzle_01,
+                               puzzle_02 as day_03_puzzle_02)
 
 
 ################################################################################
@@ -30,6 +32,10 @@ class TestAdventOfCode2019(TestCase):
     def test_day_02(self) -> None:
         self.assertEqual(day_02_puzzle_01(), 3654868)
         self.assertEqual(day_02_puzzle_02(), 7014)
+
+    def test_day_03(self) -> None:
+        self.assertEqual(day_03_puzzle_01(), 870)
+        self.assertEqual(day_03_puzzle_02(), 13698)
 
 ################################################################################
 
