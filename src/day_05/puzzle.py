@@ -117,7 +117,8 @@ def puzzle_01() -> int:
         computer = IntcodeComputer()
         computer.set_input(1)
         computer.load_program(f.read().strip())
-        computer.run_program()
+        computer.start()
+        computer.join()
 
         if all(value == 0 for value in computer.output[:-1]):
             result = computer.output[-1]
@@ -201,7 +202,8 @@ def puzzle_02() -> int:
         computer = IntcodeComputer()
         computer.set_input(5)
         computer.load_program(f.read().strip())
-        computer.run_program()
+        computer.start()
+        computer.join()
 
         result = computer.output[-1]
         print_puzzle_solution(result)

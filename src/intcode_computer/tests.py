@@ -28,7 +28,8 @@ class TestIntcodeComputer(TestCase):
         computer.load_program(program)
         if input_value is not None:
             computer.set_input(input_value)
-        computer.run_program()
+        computer.start()
+        computer.join()
 
         if address is not None:
             self.assertEqual(computer.get_value(address), result_value)

@@ -105,7 +105,8 @@ def puzzle_01() -> int:
         computer.load_program(f.read().strip())
         computer.set_value(1, 12)
         computer.set_value(2, 2)
-        computer.run_program()
+        computer.start()
+        computer.join()
 
         result = computer.get_value(0)
         print_puzzle_solution(result)
@@ -165,16 +166,16 @@ def puzzle_02() -> int:
     """
 
     with open(INPUT_FILE_PATH, "r") as f:
-        computer = IntcodeComputer()
         program = f.read().strip()
 
         for permutation in permutations(range(100), 2):
-            computer.reset()
+            computer = IntcodeComputer()
             computer.load_program(program)
             noun, verb = permutation
             computer.set_value(1, noun)
             computer.set_value(2, verb)
-            computer.run_program()
+            computer.start()
+            computer.join()
 
             if computer.get_value(0) == DESIRED_OUTPUT:
                 result = 100 * noun + verb

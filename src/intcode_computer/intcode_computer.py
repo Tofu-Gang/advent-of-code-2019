@@ -7,12 +7,13 @@ program is a list of integers separated by commas.
 """
 
 from typing import Tuple
+from threading import Thread, Condition
 from src.intcode_computer.param import Param
 
 
 ################################################################################
 
-class IntcodeComputer:
+class IntcodeComputer(Thread):
     SEPARATOR = ","
     POSITION_MODE = 0
     IMMEDIATE_MODE = 1
@@ -32,15 +33,21 @@ class IntcodeComputer:
 
 ################################################################################
 
-    def __init__(self):
+    def __init__(self, output_condition: Condition=None):
         """
         Initialize an empty memory, input and output. The address of the current
         instruction is called the instruction pointer; it starts at 0. Associate
         opcodes with their instructions.
+
+        :param output_condition: used to notify other instances that an output
+        value was written
         """
 
+        super().__init__()
+        self._condition = Condition()
+        self._output_condition = output_condition
         self._memory = []
-        self._input = None
+        self._input = []
         self._output = []
         self._instruction_pointer = 0
         self._running = False
@@ -125,7 +132,9 @@ class IntcodeComputer:
         :param value: an input value
         """
 
-        self._input = value
+        with self._condition:
+            self._input.append(value)
+            self._condition.notify()
 
 ################################################################################
 
@@ -140,7 +149,7 @@ class IntcodeComputer:
 
 ################################################################################
 
-    def run_program(self) -> None:
+    def run(self) -> None:
         """
         To run an Intcode program, start by looking at the first integer (called
         position 0). Here, you will find an opcode. Opcodes mark the beginning
@@ -168,7 +177,7 @@ class IntcodeComputer:
         """
 
         self._memory = []
-        self._input = None
+        self._input = []
         self._output = []
         self._instruction_pointer = 0
         self._running = False
@@ -268,20 +277,31 @@ class IntcodeComputer:
         given by its only parameter.
         """
 
+        with self._condition:
+            if len(self._input) == 0:
+                self._condition.wait()
+
         param = self._get_params()[0]
-        self._memory[param.address] = self._input
+        self._memory[param.address] = self._input.pop(0)
         self._jump_to_next_instruction(self.STORE_INPUT)
 
 ################################################################################
 
     def _store_output(self) -> None:
         """
-        Opcode 4 outputs the value of its only parameter.
+        Opcode 4 outputs the value of its only parameter. If possible, notifies
+        other intcode computer instances.
         """
 
         param = self._get_params()[0]
         self._output.append(param.value)
         self._jump_to_next_instruction(self.STORE_OUTPUT)
+
+        try:
+            with self._output_condition:
+                self._output_condition.notify()
+        except TypeError:
+            pass
 
 ################################################################################
 
