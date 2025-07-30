@@ -1,6 +1,7 @@
 __author__ = "Tofu-Gang"
 __email__ = "tofugangsw@gmail.com"
 
+from typing import Tuple
 from unittest import TestCase
 from src.intcode_computer.intcode_computer import IntcodeComputer
 
@@ -9,31 +10,58 @@ from src.intcode_computer.intcode_computer import IntcodeComputer
 
 class TestIntcodeComputer(TestCase):
 
-    def _test_program(self, program: str, result_value: int,
-                      address: int | None=None,
-                      input_value: int | None=None) -> None:
+    def _init_computer(
+            self, program: str, input_values: Tuple[int]) -> IntcodeComputer:
         """
-        Test an Intcode program by running it and then comparing a value from
-        a specified address with an expected one; if no address is provided, the
-        last value from the output is used for the comparison. Intcode computer
-        can be provided with an input value.
+        Init an Intcode Computer and run the specified program. Return the
+        computer after the program finished running.
 
         :param program: an Intcode program
-        :param result_value: an expected value to test against
-        :param address: an address of the test value
-        :param input_value: optional input value
+        :param input_values: input values
+        :return: the computer after the program finished running
         """
 
         computer = IntcodeComputer()
         computer.load_program(program)
-        if input_value is not None:
-            computer.set_input(input_value)
+        for value in input_values:
+            computer.set_input(value)
         computer.start()
         computer.join()
+        return computer
 
-        if address is not None:
-            self.assertEqual(computer.get_value(address), result_value)
-        else:
-            self.assertEqual(computer.output[-1], result_value)
+################################################################################
+
+    def _test_output(
+            self, program: str, input_values: Tuple[int],
+            result: Tuple[int]) -> None:
+        """
+        Init an Intcode Computer and run the specified program. Compare its
+        output with an expected result.
+
+        :param program: an Intcode program
+        :param input_values: input values
+        :param result: an expected output
+        """
+
+        computer = self._init_computer(program, input_values)
+        self.assertEqual(computer.output, result)
+
+################################################################################
+
+    def _test_address_value(
+            self, program: str, input_values: Tuple[int], address: int,
+            result: int) -> None:
+        """
+        Init an Intcode Computer and run the specified program. Compare a value
+        on a specified address in the memory with an expected result.
+
+        :param program: an Intcode program
+        :param input_values: input values
+        :param address: a memory address
+        :param result: an expected value
+        """
+
+        computer = self._init_computer(program, input_values)
+        self.assertEqual(computer.get_value(address), result)
 
 ################################################################################

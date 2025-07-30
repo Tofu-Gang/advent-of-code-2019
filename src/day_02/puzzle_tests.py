@@ -54,13 +54,20 @@ class TestDay02(TestIntcodeComputer):
         1,1,1,4,99,5,6,0,99 becomes 30,1,1,4,2,5,6,0,99.
         """
 
-        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 3500, 0)
-        self._test_program("1,9,10,3,2,3,11,0,99,30,40,50", 70, 3)
-        self._test_program("1,0,0,0,99", 2, 0)
-        self._test_program("2,3,0,3,99",6, 3)
-        self._test_program("2,4,4,5,99,0", 9801, 5)
-        self._test_program("1,1,1,4,99,5,6,0,99", 30, 0)
-        self._test_program("1,1,1,4,99,5,6,0,99", 2, 4)
+        self._test_address_value("1,9,10,3,2,3,11,0,99,30,40,50",
+                                 tuple(), 0, 3500)
+        self._test_address_value("1,9,10,3,2,3,11,0,99,30,40,50",
+                                 tuple(), 3, 70)
+        self._test_address_value("1,0,0,0,99", tuple(), 0,
+                                 2)
+        self._test_address_value("2,3,0,3,99", tuple(), 3,
+                                 6)
+        self._test_address_value("2,4,4,5,99,0", tuple(), 5,
+                                 9801)
+        self._test_address_value("1,1,1,4,99,5,6,0,99", tuple(),
+                                 0, 30)
+        self._test_address_value("1,1,1,4,99,5,6,0,99", tuple(),
+                                 4, 2)
 
 ################################################################################
 

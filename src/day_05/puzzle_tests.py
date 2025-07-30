@@ -19,9 +19,11 @@ class TestDay02(TestIntcodeComputer):
          program.
         """
 
-        self._test_program("3,0,4,0,99", 333, input_value=333)
-        self._test_program("1002,4,3,4,33", 99, address=4)
-        self._test_program("1101,100,-1,4,0", 99, address=4)
+        self._test_output("3,0,4,0,99", tuple([333]), tuple([333]))
+        self._test_address_value(
+            "1002,4,3,4,33", tuple(), 4, 99)
+        self._test_address_value(
+            "1101,100,-1,4,0", tuple(), 4, 99)
 
 ################################################################################
 
@@ -54,48 +56,48 @@ class TestDay02(TestIntcodeComputer):
         input value is greater than 8.
         """
 
-        self._test_program(
-            "3,9,8,9,10,9,4,9,99,-1,8", 1, input_value=8)
-        self._test_program(
-            "3,9,8,9,10,9,4,9,99,-1,8", 0, input_value=5)
-        self._test_program(
-            "3,9,7,9,10,9,4,9,99,-1,8", 1, input_value=5)
-        self._test_program(
-            "3,9,7,9,10,9,4,9,99,-1,8", 0, input_value=8)
-        self._test_program(
-            "3,3,1108,-1,8,3,4,3,99", 1, input_value=8)
-        self._test_program(
-            "3,3,1108,-1,8,3,4,3,99", 0, input_value=5)
-        self._test_program(
-            "3,3,1107,-1,8,3,4,3,99", 1, input_value=5)
-        self._test_program(
-            "3,3,1107,-1,8,3,4,3,99", 0, input_value=8)
+        self._test_output(
+            "3,9,8,9,10,9,4,9,99,-1,8", tuple([8]), tuple([1]))
+        self._test_output(
+            "3,9,8,9,10,9,4,9,99,-1,8", tuple([5]), tuple([0]))
+        self._test_output(
+            "3,9,7,9,10,9,4,9,99,-1,8", tuple([5]), tuple([1]))
+        self._test_output(
+            "3,9,7,9,10,9,4,9,99,-1,8", tuple([8]), tuple([0]))
+        self._test_output(
+            "3,3,1108,-1,8,3,4,3,99", tuple([8]), tuple([1]))
+        self._test_output(
+            "3,3,1108,-1,8,3,4,3,99", tuple([5]), tuple([0]))
+        self._test_output(
+            "3,3,1107,-1,8,3,4,3,99", tuple([5]), tuple([1]))
+        self._test_output(
+            "3,3,1107,-1,8,3,4,3,99", tuple([8]), tuple([0]))
 
-        self._test_program(
+        self._test_output(
             "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9",
-            0, input_value=0)
-        self._test_program(
+            tuple([0]), tuple([0]))
+        self._test_output(
             "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9",
-            1, input_value=8)
-        self._test_program(
+            tuple([8]), tuple([1]))
+        self._test_output(
             "3,3,1105,-1,9,1101,0,0,12,4,12,99,1",
-            0, input_value=0)
-        self._test_program(
+            tuple([0]), tuple([0]))
+        self._test_output(
             "3,3,1105,-1,9,1101,0,0,12,4,12,99,1",
-            1, input_value=8)
+            tuple([8]), tuple([1]))
 
-        self._test_program(
+        self._test_output(
             "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,"
             "0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,"
-            "1000,1,20,4,20,1105,1,46,98,99", 999, input_value=5)
-        self._test_program(
+            "1000,1,20,4,20,1105,1,46,98,99", tuple([5]), tuple([999]))
+        self._test_output(
             "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,"
             "0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,"
-            "1000,1,20,4,20,1105,1,46,98,99", 1000, input_value=8)
-        self._test_program(
+            "1000,1,20,4,20,1105,1,46,98,99", tuple([8]), tuple([1000]))
+        self._test_output(
             "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,"
             "0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,"
-            "1000,1,20,4,20,1105,1,46,98,99", 1001, input_value=14)
+            "1000,1,20,4,20,1105,1,46,98,99", tuple([14]), tuple([1001]))
 
 ################################################################################
 

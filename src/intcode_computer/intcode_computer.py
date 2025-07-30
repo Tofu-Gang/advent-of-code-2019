@@ -17,6 +17,7 @@ class IntcodeComputer(Thread):
     SEPARATOR = ","
     POSITION_MODE = 0
     IMMEDIATE_MODE = 1
+    RELATIVE_MODE = 2
     KEY_METHOD = "METHOD"
     KEY_PARAMS_COUNT = "PARAMS_COUNT"
 
@@ -29,6 +30,7 @@ class IntcodeComputer(Thread):
     JUMP_IF_FALSE = 6
     LESS_THAN = 7
     EQUALS = 8
+    ADJUST_RELATIVE_BASE = 9
     TERMINATE = 99
 
 ################################################################################
@@ -36,7 +38,8 @@ class IntcodeComputer(Thread):
     def __init__(self, output_condition: Condition=None):
         """
         Initialize an empty memory, input and output. The address of the current
-        instruction is called the instruction pointer; it starts at 0. Associate
+        instruction is called the instruction pointer; it starts at 0. Relative
+        base (for params in relative mode) starts at zero as well. Associate
         opcodes with their instructions.
 
         :param output_condition: used to notify other instances that an output
@@ -50,6 +53,7 @@ class IntcodeComputer(Thread):
         self._input = []
         self._output = []
         self._instruction_pointer = 0
+        self._relative_base = 0
         self._running = False
 
         self.OPCODES = {
@@ -84,6 +88,10 @@ class IntcodeComputer(Thread):
             self.EQUALS: {
                 self.KEY_METHOD: self._equals,
                 self.KEY_PARAMS_COUNT: 3
+            },
+            self.ADJUST_RELATIVE_BASE: {
+                self.KEY_METHOD: self._adjust_relative_base,
+                self.KEY_PARAMS_COUNT: 1
             },
             self.TERMINATE: {
                 self.KEY_METHOD: self._terminate,
@@ -173,13 +181,14 @@ class IntcodeComputer(Thread):
     def reset(self) -> None:
         """
         Wipe the memory, input and output clean and set the instruction pointer
-        back to zero.
+        and relative base back to zero.
         """
 
         self._memory = []
         self._input = []
         self._output = []
         self._instruction_pointer = 0
+        self._relative_base = 0
         self._running = False
 
 ################################################################################
@@ -219,13 +228,35 @@ class IntcodeComputer(Thread):
 
             if param_mode == self.POSITION_MODE:
                 address = self._memory[self._instruction_pointer + i]
+                if address >= len(self._memory):
+                    self._extend_memory(address)
                 value = self._memory[address]
                 params.append(Param(value, address=address))
             elif param_mode == self.IMMEDIATE_MODE:
-                value = self._memory[self._instruction_pointer + i]
+                address = self._instruction_pointer + i
+                if address >= len(self._memory):
+                    self._extend_memory(address)
+                value = self._memory[address]
                 params.append(Param(value))
+            elif param_mode == self.RELATIVE_MODE:
+                address = self._memory[self._instruction_pointer + i] + self._relative_base
+                if address >= len(self._memory):
+                    self._extend_memory(address)
+                value = self._memory[address]
+                params.append(Param(value, address=address))
 
         return tuple(params)
+
+################################################################################
+
+    def _extend_memory(self, index: int) -> None:
+        """
+
+        :param index:
+        :return:
+        """
+
+        self._memory += [0] * (index - len(self._memory) + 1)
 
 ################################################################################
 
@@ -282,7 +313,10 @@ class IntcodeComputer(Thread):
                 self._condition.wait()
 
         param = self._get_params()[0]
-        self._memory[param.address] = self._input.pop(0)
+        address = param.address
+        if address >= len(self._memory):
+            self._extend_memory(address)
+        self._memory[address] = self._input.pop(0)
         self._jump_to_next_instruction(self.STORE_INPUT)
 
 ################################################################################
@@ -370,6 +404,19 @@ class IntcodeComputer(Thread):
             self._memory[param3.address] = 0
 
         self._jump_to_next_instruction(self.EQUALS)
+
+################################################################################
+
+    def _adjust_relative_base(self) -> None:
+        """
+        Opcode 9 adjusts the relative base by the value of its only parameter.
+        The relative base increases (or decreases, if the value is negative) by
+        the value of the parameter.
+        """
+
+        param1 = self._get_params()[0]
+        self._relative_base += param1.value
+        self._jump_to_next_instruction(self.ADJUST_RELATIVE_BASE)
 
 ################################################################################
 
